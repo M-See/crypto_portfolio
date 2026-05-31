@@ -1,3 +1,4 @@
+(() => {
 class CryptoPortfolioCard extends HTMLElement {
   static getStubConfig(hass) {
     return {
@@ -6,34 +7,6 @@ class CryptoPortfolioCard extends HTMLElement {
       sort_by: "profit",
       show_graph: true,
       history_hours: 168,
-    };
-  }
-
-  static getConfigForm() {
-    return {
-      schema: [
-        { name: "entity", required: true, selector: { entity: { domain: "sensor" } } },
-        { name: "title", selector: { text: {} } },
-        {
-          name: "sort_by",
-          selector: {
-            select: {
-              options: [
-                { value: "value", label: "Value" },
-                { value: "profit", label: "Profit" },
-                { value: "invested", label: "Invested" },
-                { value: "profit_percent", label: "Profit percent" },
-              ],
-              mode: "dropdown",
-            },
-          },
-        },
-        { name: "show_graph", selector: { boolean: {} } },
-        {
-          name: "history_hours",
-          selector: { number: { min: 1, max: 2160, step: 1, mode: "box" } },
-        },
-      ],
     };
   }
 
@@ -671,10 +644,12 @@ class CryptoPortfolioCard extends HTMLElement {
   }
 }
 
-customElements.define("crypto-portfolio-card", CryptoPortfolioCard);
+if (!customElements.get("crypto-portfolio-card")) {
+  customElements.define("crypto-portfolio-card", CryptoPortfolioCard);
+}
 
 window.customCards = window.customCards || [];
-window.customCards.push({
+const cryptoPortfolioCardInfo = {
   type: "crypto-portfolio-card",
   name: "Crypto Portfolio Card",
   description: "Shows a crypto portfolio overview from one sensor entity.",
@@ -693,4 +668,13 @@ window.customCards.push({
       },
     };
   },
-});
+};
+const existingCardInfo = window.customCards.find(
+  (card) => card.type === cryptoPortfolioCardInfo.type
+);
+if (existingCardInfo) {
+  Object.assign(existingCardInfo, cryptoPortfolioCardInfo);
+} else {
+  window.customCards.push(cryptoPortfolioCardInfo);
+}
+})();
