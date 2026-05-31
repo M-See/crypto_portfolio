@@ -9,6 +9,34 @@ class CryptoPortfolioCard extends HTMLElement {
     };
   }
 
+  static getConfigForm() {
+    return {
+      schema: [
+        { name: "entity", required: true, selector: { entity: { domain: "sensor" } } },
+        { name: "title", selector: { text: {} } },
+        {
+          name: "sort_by",
+          selector: {
+            select: {
+              options: [
+                { value: "value", label: "Value" },
+                { value: "profit", label: "Profit" },
+                { value: "invested", label: "Invested" },
+                { value: "profit_percent", label: "Profit percent" },
+              ],
+              mode: "dropdown",
+            },
+          },
+        },
+        { name: "show_graph", selector: { boolean: {} } },
+        {
+          name: "history_hours",
+          selector: { number: { min: 1, max: 2160, step: 1, mode: "box" } },
+        },
+      ],
+    };
+  }
+
   static findPortfolioEntity(hass) {
     const states = hass?.states || {};
     const entity = Object.entries(states).find(([, state]) =>
@@ -650,6 +678,11 @@ window.customCards.push({
     if (!state?.attributes?.positions) {
       return null;
     }
-    return { entity: entityId };
+    return {
+      config: {
+        type: "custom:crypto-portfolio-card",
+        entity: entityId,
+      },
+    };
   },
 });

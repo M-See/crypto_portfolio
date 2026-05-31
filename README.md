@@ -3,53 +3,72 @@
 
 ### Powered by CoinGecko API
 
-#### Portfolio-Sensoren und Dashboard-Karte fuer deine Crypto-Investments in Home Assistant
+#### Portfolio sensors and a Lovelace dashboard card for crypto investments
 
-Crypto Portfolio ist eine Home-Assistant-Custom-Integration. Sie holt aktuelle
-Coin-Preise von CoinGecko, berechnet Wert, Invest, Gewinn und Gewinn in Prozent
-und stellt die Daten als Sensoren sowie als eigene Lovelace-Karte bereit.
+Crypto Portfolio is a Home Assistant custom integration. It fetches current
+coin prices from CoinGecko, calculates portfolio value, invested amount, profit
+and profit percentage, and exposes the result as Home Assistant sensors.
 
-Die Konfiguration laeuft ueber die Home-Assistant-UI. Du musst keine
-`configuration.yaml` mit langen REST-Sensoren oder Template-Sensoren pflegen.
+The integration is configured through the Home Assistant UI. You do not need to
+maintain long REST sensors or template sensors in `configuration.yaml`.
 
 ## Features
 
-- Einrichtung als Home-Assistant-Integration per UI
-- Investments pro Coin mit CoinGecko-ID, Symbol, Menge und investiertem Betrag
-- Options-Flow mit Menue fuer allgemeine Einstellungen, Coin hinzufuegen,
-  Coin bearbeiten, Coin loeschen und erweiterten JSON-Editor
-- Portfolio-Sensoren fuer Gesamtwert, Invest, Gewinn und Gewinn in Prozent
-- Einzelsensoren fuer den aktuellen Wert jeder Coin-Position
-- Dashboard-Karte mit Uebersicht, Farblogik fuer Gewinn/Verlust und
-  Portfolio-Verlauf aus der Home-Assistant-Historie
-- Lokales Testgeruest mit Docker Compose auf Port `8124`
+- UI-based setup through **Settings > Devices & services**
+- Portfolio holdings with CoinGecko ID or known ticker symbol, amount and
+  invested amount
+- Options flow for general settings, adding a coin, editing one coin, removing
+  one coin and advanced JSON editing
+- Summary sensors for total value, invested amount, profit and profit percent
+- Per-coin value sensors
+- Lovelace card with portfolio overview, profit/loss coloring and a value
+  history chart
+- Local development setup with Docker Compose on port `8124`
 
 ## Installation step 1
 
-Es gibt zwei Wege, Crypto Portfolio zu installieren:
+There are two ways to install Crypto Portfolio.
 
-1. HACS als Custom Repository verwenden
-   - HACS oeffnen
-   - Drei-Punkte-Menue > Custom repositories
-   - Repository: `https://github.com/M-See/crypto_portfolio`
-   - Category: `Integration`
-   - Danach **Crypto Portfolio** installieren
-2. Manuell installieren
-   - Den Ordner `custom_components/crypto_portfolio/` nach
-     `[homeassistant]/config/custom_components/crypto_portfolio/` kopieren
+### HACS custom repository
 
-Starte Home Assistant nach der Installation neu.
+1. Open HACS.
+2. Open the three-dot menu and choose **Custom repositories**.
+3. Add this repository:
+
+   ```text
+   https://github.com/M-See/crypto_portfolio
+   ```
+
+4. Select category **Integration**.
+5. Install **Crypto Portfolio**.
+6. Restart Home Assistant.
+
+### Manual installation
+
+Copy this folder:
+
+```text
+custom_components/crypto_portfolio/
+```
+
+to:
+
+```text
+[homeassistant]/config/custom_components/crypto_portfolio/
+```
+
+Then restart Home Assistant.
 
 ## Installation step 2
 
-Fuege die Integration in Home Assistant hinzu:
+Add the integration in Home Assistant:
 
-1. **Einstellungen > Geraete & Dienste** oeffnen
-2. **Integration hinzufuegen** anklicken
-3. Nach **Crypto Portfolio** suchen
-4. Portfolio-Name, Waehrung, Aktualisierungsintervall und Investments eintragen
+1. Open **Settings > Devices & services**.
+2. Click **Add integration**.
+3. Search for **Crypto Portfolio**.
+4. Enter portfolio name, currency, update interval and holdings.
 
-Beispiel fuer Investments:
+Example holdings:
 
 ```json
 [
@@ -60,7 +79,7 @@ Beispiel fuer Investments:
     "invested": 1200
   },
   {
-    "coin_id": "ethereum",
+    "coin_id": "ETH",
     "symbol": "ETH",
     "amount": 1.2,
     "invested": 2500
@@ -68,48 +87,54 @@ Beispiel fuer Investments:
 ]
 ```
 
-`coin_id` ist die CoinGecko-ID, nicht zwingend das Symbol. Beispiele:
-`bitcoin`, `ethereum`, `cardano`, `ripple`, `solana`.
+`coin_id` should normally be the CoinGecko coin ID, for example `bitcoin`,
+`ethereum`, `cardano`, `ripple` or `solana`. Common ticker symbols such as
+`BTC`, `ETH`, `ADA`, `XRP`, `SOL`, `BNB`, `DOGE`, `DOT`, `LINK`, `USDT` and
+`USDC` are also accepted and will be normalized internally.
+
+CoinGecko IDs are still the safest option because ticker symbols can be
+ambiguous. If a coin does not show a price, use the exact CoinGecko ID.
 
 ## Options
 
-Nach der Einrichtung kannst du dein Portfolio jederzeit bearbeiten:
+After setup, open:
 
 ```text
-Einstellungen > Geraete & Dienste > Crypto Portfolio > Konfigurieren
+Settings > Devices & services > Crypto Portfolio > Configure
 ```
 
-Das Options-Menue bietet:
+The options menu contains:
 
-- Allgemeine Einstellungen
-- Coin hinzufuegen
-- Coin bearbeiten
-- Coin loeschen
-- Erweiterter JSON-Editor
+- General settings
+- Add coin
+- Edit coin
+- Remove coin
+- Advanced JSON editor
 
-Beim Bearbeiten oder Loeschen waehlst du die einzelne Coin-Position per
-Dropdown aus. Nach dem Speichern laedt Home Assistant die Integration neu.
+When editing or removing a holding, you can select the coin from a dropdown.
+Home Assistant reloads the integration after saving the options.
 
 ## Properties
 
 <pre>
-- Portfolio name                         Anzeigename fuer Sensoren und Geraet
-- Currency                               Zielwaehrung fuer CoinGecko, z.B. eur oder usd
-- Update frequency (minutes)             Aktualisierungsintervall fuer Preisabrufe
-- Cryptocurrency id                      CoinGecko-ID, z.B. bitcoin oder ethereum
-- Symbol                                 Kurzes Symbol fuer die Karte, z.B. BTC
-- Amount                                 Anzahl deiner Coins oder Tokens
-- Invested                               Dein investierter Betrag in der gewaehlten Waehrung
+- Portfolio name                         Display name for the device and sensors
+- Currency                               Target currency for CoinGecko, for example eur or usd
+- Update frequency (minutes)             How often prices should be refreshed
+- CoinGecko coin ID or symbol            CoinGecko ID, for example bitcoin, or a known ticker such as BTC
+- Symbol                                 Short display symbol for the dashboard card
+- Amount                                 Number of coins or tokens held
+- Invested                               Invested amount in the selected currency
 </pre>
 
-CoinGecko-Listen:
+Useful CoinGecko lists:
 
-- Coin-IDs: https://api.coingecko.com/api/v3/coins/list
-- Unterstuetzte Waehrungen: https://api.coingecko.com/api/v3/simple/supported_vs_currencies
+- Coin IDs: https://api.coingecko.com/api/v3/coins/list
+- Supported currencies: https://api.coingecko.com/api/v3/simple/supported_vs_currencies
 
 ## Sensors
 
-Bei Portfolio-Name `Crypto Portfolio` entstehen zum Beispiel:
+For a portfolio named `Crypto Portfolio`, Home Assistant creates sensors such
+as:
 
 ```text
 sensor.crypto_portfolio_value
@@ -120,52 +145,80 @@ sensor.crypto_portfolio_bitcoin_value
 sensor.crypto_portfolio_ethereum_value
 ```
 
+Entity IDs may differ if Home Assistant already has entities with the same
+names.
+
 ## Attributes
 
-Der Hauptsensor `sensor.crypto_portfolio_value` enthaelt diese wichtigen
-Attribute:
+The main value sensor, usually `sensor.crypto_portfolio_value`, contains these
+attributes:
 
 ```text
-- invested                  Gesamt investierter Betrag
-- priced_invested           Investierter Betrag fuer Positionen mit aktuellem Preis
-- profit                    Absoluter Gewinn oder Verlust
-- profit_percent            Gewinn oder Verlust in Prozent
-- missing_prices            Coin-IDs ohne aktuellen Preis
-- positions_count           Anzahl der Positionen
-- positions                 Liste aller Coin-Positionen
+- invested                  Total invested amount
+- priced_invested           Invested amount for positions with a current price
+- profit                    Absolute profit or loss
+- profit_percent            Profit or loss in percent
+- missing_prices            Coin IDs without a current price
+- positions_count           Number of positions
+- positions                 List of all coin positions
 ```
 
-Jede Position in `positions` enthaelt:
+Each item in `positions` contains:
 
 ```text
-- coin_id                   CoinGecko-ID
-- symbol                    Symbol aus deiner Konfiguration
-- amount                    Anzahl Coins oder Tokens
-- invested                  Investierter Betrag
-- current_price             Aktueller Preis pro Coin
-- value                     Aktueller Wert der Position
-- profit                    Gewinn oder Verlust der Position
-- profit_percent            Gewinn oder Verlust in Prozent
-- change_24h_percent        24h-Aenderung laut CoinGecko
+- coin_id                   CoinGecko ID
+- symbol                    Display symbol from your configuration
+- amount                    Number of coins or tokens
+- invested                  Invested amount
+- current_price             Current price per coin
+- value                     Current value of the position
+- profit                    Profit or loss of the position
+- profit_percent            Profit or loss in percent
+- change_24h_percent        24h change reported by CoinGecko
 ```
 
-Die Einzelsensoren pro Coin enthalten ebenfalls `coin_id`, `symbol`, `amount`,
-`invested`, `current_price`, `profit`, `profit_percent` und
-`change_24h_percent`.
+The per-coin sensors also expose `coin_id`, `symbol`, `amount`, `invested`,
+`current_price`, `profit`, `profit_percent` and `change_24h_percent`.
 
 ## Dashboard card
 
-Die Integration liefert eine eigene Lovelace-Karte mit:
+The integration bundles a Lovelace card:
 
 ```text
-/crypto_portfolio/crypto-portfolio-card.js?v=4
+/crypto_portfolio/crypto-portfolio-card.js?v=5
 ```
 
-Wenn die Integration geladen ist, registriert sie diese Datei automatisch als
-Frontend-Modul. Danach sollte die Karte im Karten-Picker als
-**Crypto Portfolio Card** erscheinen.
+The integration tries to load the card automatically after it is set up. If the
+card does not appear in the card picker, add the dashboard resource manually.
 
-Manuelle Kartenkonfiguration:
+### Manual resource setup
+
+1. Open your Home Assistant user profile and enable **Advanced mode**.
+2. Open **Settings > Dashboards**.
+3. Open the three-dot menu and choose **Resources**.
+4. Add a resource:
+
+   ```text
+   URL:  /crypto_portfolio/crypto-portfolio-card.js?v=5
+   Type: JavaScript module
+   ```
+
+5. Refresh the browser tab with a hard reload.
+6. Reopen the card picker.
+
+You can also test the file directly in your browser:
+
+```text
+https://your-home-assistant-url/crypto_portfolio/crypto-portfolio-card.js?v=5
+```
+
+If this URL returns `404`, the integration is not loaded yet. Restart Home
+Assistant and make sure the Crypto Portfolio integration exists under
+**Settings > Devices & services**.
+
+### Manual card configuration
+
+If the card picker still does not list the card, add a manual card:
 
 ```yaml
 type: custom:crypto-portfolio-card
@@ -176,39 +229,40 @@ show_graph: true
 history_hours: 168
 ```
 
-Optionen:
+Card options:
 
 <pre>
-- entity                                  Hauptsensor mit positions-Attribut
-- title                                   Titel der Karte
-- sort_by                                 Sortierung: value, profit, invested oder profit_percent
-- show_graph                             Portfolio-Verlauf anzeigen
-- history_hours                          Zeitraum fuer den Verlauf in Stunden
+- entity                                  Main portfolio sensor with the positions attribute
+- title                                   Card title
+- sort_by                                 Sort by value, profit, invested or profit_percent
+- show_graph                             Show the portfolio history chart
+- history_hours                          Time range for the chart in hours
 </pre>
 
-Die Karte nutzt die Home-Assistant-Historie des Portfolio-Wert-Sensors. Direkt
-nach dem Einrichten kann der Graph deshalb leer sein, bis genug Historie
-aufgezeichnet wurde.
+The chart uses the Home Assistant history of the portfolio value sensor. Right
+after setup, the chart can be empty until Home Assistant has recorded enough
+states.
 
 ## Local testing
 
-Du brauchst kein eigenes Dockerfile. Die `docker-compose.yml` nutzt ein
-fertiges Home-Assistant-Image und bindet die Integration lokal ein.
+No custom Dockerfile is required. The included `docker-compose.yml` starts a
+stock Home Assistant container and mounts this integration into the test
+instance.
 
-Die Testinstanz laeuft auf Port `8124`, damit sie nicht mit einer echten
-Home-Assistant-Instanz auf Port `8123` kollidiert.
+The local test instance uses port `8124` so it does not conflict with a real
+Home Assistant instance running on port `8123`.
 
 ```powershell
 docker compose up -d
 ```
 
-Home Assistant oeffnen:
+Open Home Assistant:
 
 ```text
 http://localhost:8124
 ```
 
-Stoppen:
+Stop the test instance:
 
 ```powershell
 docker compose stop
@@ -226,11 +280,11 @@ docker compose config
 
 ## API limit
 
-CoinGecko begrenzt die Public API je nach Auslastung. Verwende deshalb ein
-realistisches Update-Intervall. Der Standard ist `10` Minuten.
+CoinGecko rate limits the public API depending on current usage conditions.
+Use a realistic update interval. The default is `10` minutes.
 
-## Issues and new functionality
+## Issues and feature requests
 
-Probleme und Ideen bitte als Issue melden:
+Please use GitHub issues:
 
 https://github.com/M-See/crypto_portfolio/issues

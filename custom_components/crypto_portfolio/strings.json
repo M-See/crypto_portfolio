@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "Crypto Portfolio",
-        "description": "Create a portfolio and paste your holdings as JSON. The coin_id must match CoinGecko, for example bitcoin, ethereum or cardano.",
+        "description": "Create a portfolio and paste your holdings as JSON. Use a CoinGecko coin ID such as bitcoin, ethereum or cardano. Common ticker symbols such as BTC and ETH are also accepted.",
         "data": {
           "name": "Portfolio name",
           "currency": "Currency",
@@ -43,7 +43,7 @@
         "title": "Add coin",
         "description": "Add one CoinGecko holding.",
         "data": {
-          "coin_id": "CoinGecko coin ID",
+          "coin_id": "CoinGecko coin ID or symbol",
           "symbol": "Symbol",
           "amount": "Amount",
           "invested": "Invested"
@@ -60,7 +60,7 @@
         "title": "Edit coin",
         "description": "Edit one configured holding.",
         "data": {
-          "coin_id": "CoinGecko coin ID",
+          "coin_id": "CoinGecko coin ID or symbol",
           "symbol": "Symbol",
           "amount": "Amount",
           "invested": "Invested"

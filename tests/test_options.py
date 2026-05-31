@@ -17,6 +17,7 @@ from custom_components.crypto_portfolio.options import (  # noqa: E402
     HoldingsValidationError,
     holdings_from_json,
     holdings_to_json,
+    normalize_coin_id,
 )
 
 
@@ -56,6 +57,26 @@ class HoldingsOptionsTest(unittest.TestCase):
                 ]
                 """
             )
+
+    def test_known_symbols_are_accepted_as_coin_ids(self) -> None:
+        self.assertEqual(normalize_coin_id("BTC"), "bitcoin")
+        self.assertEqual(normalize_coin_id("eth"), "ethereum")
+        self.assertEqual(normalize_coin_id("cardano"), "cardano")
+
+        parsed = holdings_from_json(
+            """
+            [
+              {
+                "coin_id": "BTC",
+                "symbol": "BTC",
+                "amount": 0.1,
+                "invested": 500
+              }
+            ]
+            """
+        )
+
+        self.assertEqual(parsed[0][CONF_COIN_ID], "bitcoin")
 
 
 if __name__ == "__main__":
