@@ -191,7 +191,15 @@ class CryptoPortfolioCard extends HTMLElement {
     this._historyLoading = true;
     this._historyError = null;
     const start = new Date(now - hours * 60 * 60 * 1000).toISOString();
-    const path = `history/period/${encodeURIComponent(start)}?filter_entity_id=${encodeURIComponent(entityId)}&no_attributes`;
+    const end = new Date(now).toISOString();
+    const params = new URLSearchParams({
+      filter_entity_id: entityId,
+      end_time: end,
+      significant_changes_only: "0",
+    });
+    params.append("minimal_response", "");
+    params.append("no_attributes", "");
+    const path = `history/period/${encodeURIComponent(start)}?${params.toString()}`;
 
     this._hass
       .callApi("GET", path)
