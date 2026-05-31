@@ -1,0 +1,12 @@
+services:
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    container_name: ha-crypto-portfolio-dev
+    ports:
+      - "8124:8123"
+    volumes:
+      - ./config:/config
+      - ./custom_components/crypto_portfolio:/config/custom_components/crypto_portfolio
+    environment:
+      TZ: Europe/Berlin
+    restart: unless-stopped

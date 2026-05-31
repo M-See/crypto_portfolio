@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Local Home Assistant test instance
+config/
+
+# Local editor and environment files
+.env
+.venv/
+.vscode/
+.idea/

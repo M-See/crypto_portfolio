@@ -1,0 +1,13 @@
+{
+  "domain": "crypto_portfolio",
+  "name": "Crypto Portfolio",
+  "codeowners": ["@M-See"],
+  "config_flow": true,
+  "dependencies": ["http"],
+  "documentation": "https://github.com/M-See/crypto_portfolio",
+  "integration_type": "service",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/M-See/crypto_portfolio/issues",
+  "requirements": [],
+  "version": "0.2.0"
+}

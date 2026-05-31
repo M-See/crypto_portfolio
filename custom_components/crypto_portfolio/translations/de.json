@@ -1,0 +1,91 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Crypto Portfolio",
+        "description": "Erstelle ein Portfolio und fuege deine Investments als JSON ein. Die coin_id muss zu CoinGecko passen, zum Beispiel bitcoin, ethereum oder cardano.",
+        "data": {
+          "name": "Portfolio-Name",
+          "currency": "Waehrung",
+          "scan_interval": "Aktualisierungsintervall in Minuten",
+          "holdings_json": "Investments als JSON"
+        }
+      }
+    },
+    "error": {
+      "invalid_currency": "Die Waehrung ist erforderlich.",
+      "invalid_holdings": "Das Investments-JSON ist ungueltig. Es muss eine nicht leere Liste mit coin_id, symbol, amount und invested sein."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Crypto-Portfolio-Optionen",
+        "description": "Waehle aus, was du bearbeiten moechtest.",
+        "menu_options": {
+          "settings": "Allgemeine Einstellungen",
+          "add_coin": "Coin hinzufuegen",
+          "select_coin": "Coin bearbeiten",
+          "remove_coin": "Coin loeschen",
+          "advanced_json": "Erweiterter JSON-Editor"
+        }
+      },
+      "settings": {
+        "title": "Allgemeine Einstellungen",
+        "description": "Bearbeite Portfolio-Name, Waehrung und Aktualisierungsintervall.",
+        "data": {
+          "name": "Portfolio-Name",
+          "currency": "Waehrung",
+          "scan_interval": "Aktualisierungsintervall in Minuten"
+        }
+      },
+      "add_coin": {
+        "title": "Coin hinzufuegen",
+        "description": "Fuege ein einzelnes CoinGecko-Investment hinzu.",
+        "data": {
+          "coin_id": "CoinGecko-Coin-ID",
+          "symbol": "Symbol",
+          "amount": "Menge",
+          "invested": "Investiert"
+        }
+      },
+      "select_coin": {
+        "title": "Coin bearbeiten",
+        "description": "Waehle aus, welches Investment du bearbeiten moechtest.",
+        "data": {
+          "coin_index": "Coin"
+        }
+      },
+      "edit_coin": {
+        "title": "Coin bearbeiten",
+        "description": "Bearbeite ein einzelnes Investment.",
+        "data": {
+          "coin_id": "CoinGecko-Coin-ID",
+          "symbol": "Symbol",
+          "amount": "Menge",
+          "invested": "Investiert"
+        }
+      },
+      "remove_coin": {
+        "title": "Coin loeschen",
+        "description": "Waehle aus, welches Investment entfernt werden soll.",
+        "data": {
+          "coin_index": "Coin"
+        }
+      },
+      "advanced_json": {
+        "title": "Erweiterter JSON-Editor",
+        "description": "Bearbeite alle Investments als JSON.",
+        "data": {
+          "holdings_json": "Investments als JSON"
+        }
+      }
+    },
+    "error": {
+      "cannot_remove_last": "Mindestens ein Investment ist erforderlich.",
+      "invalid_coin": "Die Coin-Werte sind ungueltig. Pruefe Coin-ID, Symbol, Menge und Investiert.",
+      "invalid_currency": "Die Waehrung ist erforderlich.",
+      "invalid_holdings": "Das Investments-JSON ist ungueltig. Es muss eine nicht leere Liste mit coin_id, symbol, amount und invested sein."
+    }
+  }
+}
