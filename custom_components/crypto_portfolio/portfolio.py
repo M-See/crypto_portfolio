@@ -6,6 +6,8 @@ from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
 from typing import Any
 
+from .coins import normalize_coin_id
+
 
 @dataclass(frozen=True)
 class Holding:
@@ -75,7 +77,7 @@ def build_holdings(raw_holdings: list[dict[str, Any]]) -> list[Holding]:
     """Build typed holdings from config entry options."""
     return [
         Holding(
-            coin_id=str(item["coin_id"]).lower(),
+            coin_id=normalize_coin_id(item["coin_id"]),
             symbol=str(item["symbol"]).upper(),
             amount=decimal_value(item["amount"], "amount"),
             invested=decimal_value(item["invested"], "invested"),

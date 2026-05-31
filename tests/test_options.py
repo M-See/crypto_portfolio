@@ -13,11 +13,11 @@ from custom_components.crypto_portfolio.const import (  # noqa: E402
     CONF_INVESTED,
     CONF_SYMBOL,
 )
+from custom_components.crypto_portfolio.coins import normalize_coin_id  # noqa: E402
 from custom_components.crypto_portfolio.options import (  # noqa: E402
     HoldingsValidationError,
     holdings_from_json,
     holdings_to_json,
-    normalize_coin_id,
 )
 
 

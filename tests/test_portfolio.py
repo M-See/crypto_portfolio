@@ -10,6 +10,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from custom_components.crypto_portfolio.portfolio import (  # noqa: E402
     Holding,
+    build_holdings,
     calculate_portfolio,
 )
 
@@ -48,6 +49,20 @@ class PortfolioCalculationTest(unittest.TestCase):
         self.assertEqual(summary.total_value, Decimal("3000.0"))
         self.assertEqual(summary.total_profit, Decimal("1000.0"))
         self.assertEqual(summary.missing_prices, ("unknown",))
+
+    def test_build_holdings_accepts_known_symbols_as_coin_ids(self) -> None:
+        holdings = build_holdings(
+            [
+                {
+                    "coin_id": "BTC",
+                    "symbol": "BTC",
+                    "amount": 0.1,
+                    "invested": 500,
+                }
+            ]
+        )
+
+        self.assertEqual(holdings[0].coin_id, "bitcoin")
 
 
 if __name__ == "__main__":
