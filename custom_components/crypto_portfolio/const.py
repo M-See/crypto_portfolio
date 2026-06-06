@@ -18,4 +18,4 @@ DEFAULT_SCAN_INTERVAL_MINUTES = 10
 DEFAULT_SCAN_INTERVAL = timedelta(minutes=DEFAULT_SCAN_INTERVAL_MINUTES)
 
 COINGECKO_SIMPLE_PRICE_URL = "https://api.coingecko.com/api/v3/simple/price"
-FRONTEND_CARD_URL = f"/{DOMAIN}/crypto-portfolio-card.js?v=7"
+FRONTEND_CARD_URL = f"/{DOMAIN}/crypto-portfolio-card.js?v=8"
