@@ -117,7 +117,7 @@ Home Assistant reloads the integration after saving the options.
 The integration also keeps a JSON file for each portfolio:
 
 ```text
-/config/custom_components/crypto_portfolio/data/holdings.json
+/config/crypto_portfolio/holdings.json
 ```
 
 The exact relative path is shown in the options menu and advanced JSON editor.
@@ -126,9 +126,12 @@ reopen the advanced JSON editor and save it to apply the changes. Reloading the
 integration or restarting Home Assistant also imports valid file changes.
 
 Additional portfolios use simple numbered filenames such as `holdings-2.json`.
+The directory is outside `custom_components`, so HACS updates and integration
+reinstalls do not overwrite the portfolio files.
 
-Because the file is stored inside `custom_components`, keep a backup before
-updating or reinstalling the integration through HACS.
+There is no universal direct link to the Home Assistant File editor. It is a
+Supervisor add-on and is not available on every installation type. When it is
+installed, open the displayed relative path manually.
 
 ## Properties
 

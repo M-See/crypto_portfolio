@@ -273,6 +273,9 @@ class CryptoPortfolioOptionsFlow(config_entries.OptionsFlowWithReload):
                     CONF_HOLDINGS_FILE, DEFAULT_HOLDINGS_FILENAME
                 )
             ),
+            # Prevent FormatJS errors while a browser still has the previous
+            # translation containing this removed placeholder cached.
+            "file_editor_url": "#",
         }
 
     def _current_options(self) -> dict[str, Any]:

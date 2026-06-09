@@ -35,13 +35,11 @@ class HoldingsStorageTest(unittest.TestCase):
 
         self.assertEqual(
             path,
-            Path(
-                "/config/custom_components/crypto_portfolio/data/holdings.json"
-            ),
+            Path("/config/crypto_portfolio/holdings.json"),
         )
         self.assertEqual(
             holdings_file_display_path(),
-            "custom_components/crypto_portfolio/data/holdings.json",
+            "crypto_portfolio/holdings.json",
         )
 
     def test_writes_and_reads_holdings_file(self) -> None:
@@ -65,7 +63,13 @@ class HoldingsStorageTest(unittest.TestCase):
 
     def test_migrates_legacy_entry_id_filename(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
-            legacy_path = holdings_file_path(temp_dir, "entry-id.json")
+            legacy_path = (
+                Path(temp_dir)
+                / "custom_components"
+                / "crypto_portfolio"
+                / "data"
+                / "entry-id.json"
+            )
             write_holdings_file(legacy_path, self.holdings)
 
             filename = resolve_holdings_filename(temp_dir, None, "entry-id")
@@ -76,6 +80,47 @@ class HoldingsStorageTest(unittest.TestCase):
                 read_holdings_file(holdings_file_path(temp_dir, filename)),
                 self.holdings,
             )
+
+    def test_migrates_configured_component_data_file(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            legacy_path = (
+                Path(temp_dir)
+                / "custom_components"
+                / "crypto_portfolio"
+                / "data"
+                / DEFAULT_HOLDINGS_FILENAME
+            )
+            write_holdings_file(legacy_path, self.holdings)
+
+            filename = resolve_holdings_filename(
+                temp_dir, DEFAULT_HOLDINGS_FILENAME, "entry-id"
+            )
+
+            self.assertEqual(filename, DEFAULT_HOLDINGS_FILENAME)
+            self.assertFalse(legacy_path.exists())
+            self.assertEqual(
+                read_holdings_file(holdings_file_path(temp_dir, filename)),
+                self.holdings,
+            )
+
+    def test_removes_matching_legacy_id_file_during_migration(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            component_path = (
+                Path(temp_dir)
+                / "custom_components"
+                / "crypto_portfolio"
+                / "data"
+                / DEFAULT_HOLDINGS_FILENAME
+            )
+            legacy_id_path = holdings_file_path(temp_dir, "entry-id.json")
+            write_holdings_file(component_path, self.holdings)
+            write_holdings_file(legacy_id_path, self.holdings)
+
+            resolve_holdings_filename(
+                temp_dir, DEFAULT_HOLDINGS_FILENAME, "entry-id"
+            )
+
+            self.assertFalse(legacy_id_path.exists())
 
     def test_uses_numbered_filename_for_another_portfolio(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:

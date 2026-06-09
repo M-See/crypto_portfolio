@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import shutil
 from typing import Any
 
 from .const import DOMAIN
@@ -13,7 +14,7 @@ DEFAULT_HOLDINGS_FILENAME = "holdings.json"
 
 def holdings_data_dir(config_dir: str) -> Path:
     """Return the directory containing portfolio JSON files."""
-    return Path(config_dir) / "custom_components" / DOMAIN / "data"
+    return Path(config_dir) / DOMAIN
 
 
 def holdings_file_path(
@@ -27,7 +28,7 @@ def holdings_file_display_path(
     filename: str = DEFAULT_HOLDINGS_FILENAME,
 ) -> str:
     """Return the config-relative path shown in the File editor."""
-    return f"custom_components/{DOMAIN}/data/{filename}"
+    return f"{DOMAIN}/{filename}"
 
 
 def _is_valid_filename(filename: str | None) -> bool:
@@ -45,14 +46,31 @@ def resolve_holdings_filename(
     legacy_entry_id: str,
 ) -> str:
     """Return a simple unique filename and migrate legacy ID-based files."""
-    if _is_valid_filename(configured_filename):
-        return configured_filename
-
     data_dir = holdings_data_dir(config_dir)
     data_dir.mkdir(parents=True, exist_ok=True)
+    component_data_dir = (
+        Path(config_dir) / "custom_components" / DOMAIN / "data"
+    )
+
+    if _is_valid_filename(configured_filename):
+        target_path = data_dir / configured_filename
+        if target_path.exists():
+            return configured_filename
+
+        configured_legacy_path = component_data_dir / configured_filename
+        if configured_legacy_path.exists():
+            shutil.move(configured_legacy_path, target_path)
+            legacy_id_path = data_dir / f"{legacy_entry_id}.json"
+            if (
+                legacy_id_path.exists()
+                and legacy_id_path.read_bytes() == target_path.read_bytes()
+            ):
+                legacy_id_path.unlink()
+        return configured_filename
+
     legacy_paths = [
+        component_data_dir / f"{legacy_entry_id}.json",
         data_dir / f"{legacy_entry_id}.json",
-        Path(config_dir) / DOMAIN / f"{legacy_entry_id}.json",
     ]
     legacy_path = next((path for path in legacy_paths if path.exists()), None)
 
@@ -66,7 +84,7 @@ def resolve_holdings_filename(
         path = data_dir / filename
         if not path.exists():
             if legacy_path is not None:
-                legacy_path.replace(path)
+                shutil.move(legacy_path, path)
             return filename
         index += 1
 

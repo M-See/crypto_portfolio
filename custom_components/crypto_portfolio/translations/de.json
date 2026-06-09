@@ -21,7 +21,7 @@
     "step": {
       "init": {
         "title": "Crypto-Portfolio-Optionen",
-        "description": "Waehle aus, was du bearbeiten moechtest. Investments-Datei: `{holdings_file}`.",
+        "description": "Waehle aus, was du bearbeiten moechtest. Dauerhafte Investments-Datei: `{holdings_file}`.",
         "menu_options": {
           "settings": "Allgemeine Einstellungen",
           "add_coin": "Coin hinzufuegen",
@@ -75,7 +75,7 @@
       },
       "advanced_json": {
         "title": "Erweiterter JSON-Editor",
-        "description": "Bearbeite alle Investments hier oder in `{holdings_file}`. Oeffne diesen Editor erneut, um externe Datei-Aenderungen zu laden. Beim Speichern werden Datei und Integration aktualisiert.",
+        "description": "Bearbeite alle Investments hier oder in der dauerhaften Datei `{holdings_file}`. Oeffne diesen Editor erneut, um externe Datei-Aenderungen zu laden. Beim Speichern werden Datei und Integration aktualisiert.",
         "data": {
           "holdings_json": "Investments als JSON"
         }

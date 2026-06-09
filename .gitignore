@@ -4,7 +4,7 @@ __pycache__/
 
 # Local Home Assistant test instance
 config/
-custom_components/crypto_portfolio/data/*.json
+custom_components/crypto_portfolio/data/
 
 # Local editor and environment files
 .env
