@@ -1,7 +1,8 @@
 (() => {
 const ADVANCED_JSON_EDITOR_ROWS = 24;
-const ADVANCED_JSON_PATCH_DURATION_MS = 30000;
-let advancedJsonPatchInterval;
+const advancedJsonObservedRoots = new WeakSet();
+const advancedJsonObservers = [];
+let advancedJsonPatchScheduled = false;
 
 function visitShadowDom(root, visitor) {
   for (const element of root.querySelectorAll("*")) {
@@ -14,11 +15,14 @@ function visitShadowDom(root, visitor) {
 
 function patchAdvancedJsonEditor() {
   visitShadowDom(document, (element) => {
-    if (
-      element.localName !== "step-flow-form" ||
-      element.step?.handler !== "crypto_portfolio" ||
-      element.step?.step_id !== "advanced_json"
-    ) {
+    const dataSchema = element.step?.data_schema;
+    const isCryptoPortfolioJsonEditor =
+      element.localName === "step-flow-form" &&
+      element.step?.step_id === "advanced_json" &&
+      Array.isArray(dataSchema) &&
+      dataSchema.some((field) => field.name === "holdings_json");
+
+    if (!isCryptoPortfolioJsonEditor) {
       return;
     }
 
@@ -30,6 +34,8 @@ function patchAdvancedJsonEditor() {
         parent.localName === "ha-adaptive-dialog" ||
         parent.localName === "dialog-data-entry-flow"
       ) {
+        parent.width = "large";
+        parent.setAttribute("width", "large");
         parent.style.setProperty(
           "--ha-dialog-width-md",
           "min(1024px, calc(100vw - 32px))"
@@ -53,30 +59,43 @@ function patchAdvancedJsonEditor() {
         editorElement.setAttribute("rows", String(ADVANCED_JSON_EDITOR_ROWS));
         editorElement.setAttribute("resize", "vertical");
         editorElement.style.width = "100%";
-        editorElement.style.setProperty("--ha-textarea-max-height", "640px");
+        editorElement.style.setProperty("--ha-textarea-max-height", "70vh");
       }
     });
   });
 }
 
 function scheduleAdvancedJsonEditorPatch() {
-  if (advancedJsonPatchInterval) {
-    window.clearInterval(advancedJsonPatchInterval);
+  if (advancedJsonPatchScheduled) {
+    return;
   }
 
-  const startedAt = Date.now();
-  patchAdvancedJsonEditor();
-  advancedJsonPatchInterval = window.setInterval(() => {
+  advancedJsonPatchScheduled = true;
+  window.requestAnimationFrame(() => {
+    advancedJsonPatchScheduled = false;
     patchAdvancedJsonEditor();
-    if (Date.now() - startedAt >= ADVANCED_JSON_PATCH_DURATION_MS) {
-      window.clearInterval(advancedJsonPatchInterval);
-      advancedJsonPatchInterval = undefined;
+    observeAdvancedJsonShadowRoots(document);
+  });
+}
+
+function observeAdvancedJsonShadowRoots(root) {
+  if (!advancedJsonObservedRoots.has(root)) {
+    const observer = new MutationObserver(scheduleAdvancedJsonEditorPatch);
+    observer.observe(root, { childList: true, subtree: true });
+    advancedJsonObservedRoots.add(root);
+    advancedJsonObservers.push(observer);
+  }
+
+  for (const element of root.querySelectorAll("*")) {
+    if (element.shadowRoot) {
+      observeAdvancedJsonShadowRoots(element.shadowRoot);
     }
-  }, 250);
+  }
 }
 
 document.addEventListener("show-dialog", scheduleAdvancedJsonEditorPatch);
 document.addEventListener("flow-update", scheduleAdvancedJsonEditorPatch);
+window.setInterval(scheduleAdvancedJsonEditorPatch, 5000);
 scheduleAdvancedJsonEditorPatch();
 
 class CryptoPortfolioCard extends HTMLElement {

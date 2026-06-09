@@ -31,10 +31,15 @@ class HoldingsStorageTest(unittest.TestCase):
     def test_builds_config_relative_entry_path(self) -> None:
         path = holdings_file_path("/config", "entry-id")
 
-        self.assertEqual(path, Path("/config/crypto_portfolio/entry-id.json"))
+        self.assertEqual(
+            path,
+            Path(
+                "/config/custom_components/crypto_portfolio/data/entry-id.json"
+            ),
+        )
         self.assertEqual(
             holdings_file_display_path("entry-id"),
-            "crypto_portfolio/entry-id.json",
+            "custom_components/crypto_portfolio/data/entry-id.json",
         )
 
     def test_writes_and_reads_holdings_file(self) -> None:

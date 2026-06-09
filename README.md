@@ -110,7 +110,6 @@ The options menu contains:
 - Edit coin
 - Remove coin
 - Advanced JSON editor
-- Edit/import JSON file
 
 When editing or removing a holding, you can select the coin from a dropdown.
 Home Assistant reloads the integration after saving the options.
@@ -118,16 +117,17 @@ Home Assistant reloads the integration after saving the options.
 The integration also keeps a JSON file for each portfolio:
 
 ```text
-/config/crypto_portfolio/<config-entry-id>.json
+/config/custom_components/crypto_portfolio/data/<config-entry-id>.json
 ```
 
 The exact relative path and a link to the Home Assistant File editor are shown
-in the options menu. UI changes update this file automatically. After editing
-the file externally, use **Edit/import JSON file > Import JSON file**, reload
-the integration, or restart Home Assistant to apply the changes.
+in the options menu and advanced JSON editor. UI changes update this file
+automatically. After editing the file externally, reopen the advanced JSON
+editor and save it to apply the changes. Reloading the integration or restarting
+Home Assistant also imports valid file changes.
 
-The file is stored outside `custom_components` so HACS updates do not delete
-portfolio data.
+Because the file is stored inside `custom_components`, keep a backup before
+updating or reinstalling the integration through HACS.
 
 ## Properties
 

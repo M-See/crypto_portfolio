@@ -88,7 +88,6 @@ Darueber bekommst du ein kleines Menue:
 - Coin bearbeiten
 - Coin loeschen
 - Erweiterter JSON-Editor
-- JSON-Datei bearbeiten/importieren
 
 Beim Bearbeiten oder Loeschen waehlt du den Coin per Dropdown aus. Nach dem
 Speichern laedt Home Assistant die Integration neu.
@@ -96,18 +95,18 @@ Speichern laedt Home Assistant die Integration neu.
 Fuer jedes Portfolio legt die Integration zusaetzlich eine JSON-Datei an:
 
 ```text
-/config/crypto_portfolio/<config-entry-id>.json
+/config/custom_components/crypto_portfolio/data/<config-entry-id>.json
 ```
 
 Der genaue relative Pfad und ein Link zum Home-Assistant-File-Editor werden im
-Optionsmenue angezeigt. Aenderungen ueber die UI aktualisieren die Datei
-automatisch. Nach einer Bearbeitung im File Editor kannst du die Datei ueber
-**JSON-Datei bearbeiten/importieren > JSON-Datei importieren** einlesen.
-Alternativ werden Aenderungen beim Neuladen der Integration oder beim Neustart
-von Home Assistant uebernommen.
+Optionsmenue und im erweiterten JSON-Editor angezeigt. Aenderungen ueber die UI
+aktualisieren die Datei automatisch. Nach einer Bearbeitung im File Editor
+oeffnest du den erweiterten JSON-Editor erneut und speicherst ihn, um die
+Aenderungen zu uebernehmen. Alternativ werden gueltige Datei-Aenderungen beim
+Neuladen der Integration oder beim Neustart von Home Assistant eingelesen.
 
-Die Datei liegt bewusst ausserhalb von `custom_components`, damit HACS-Updates
-die Portfolio-Daten nicht loeschen.
+Da die Datei innerhalb von `custom_components` liegt, solltest du sie vor einem
+HACS-Update oder einer Neuinstallation sichern.
 
 ## Erzeugte Sensoren
 

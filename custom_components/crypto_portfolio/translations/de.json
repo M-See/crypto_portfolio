@@ -27,8 +27,7 @@
           "add_coin": "Coin hinzufuegen",
           "select_coin": "Coin bearbeiten",
           "remove_coin": "Coin loeschen",
-          "advanced_json": "Erweiterter JSON-Editor",
-          "file_editor": "JSON-Datei bearbeiten/importieren"
+          "advanced_json": "Erweiterter JSON-Editor"
         }
       },
       "settings": {
@@ -76,20 +75,14 @@
       },
       "advanced_json": {
         "title": "Erweiterter JSON-Editor",
-        "description": "Bearbeite alle Investments als JSON. Beim Speichern wird auch `{holdings_file}` aktualisiert.",
+        "description": "[File Editor oeffnen]({file_editor_url}) und `{holdings_file}` bearbeiten. Oeffne diesen Editor danach erneut, um externe Aenderungen zu laden. Beim Speichern werden Datei und Integration aktualisiert.",
         "data": {
           "holdings_json": "Investments als JSON"
         }
-      },
-      "file_editor": {
-        "title": "JSON-Datei bearbeiten/importieren",
-        "description": "[File Editor oeffnen]({file_editor_url}), `{holdings_file}` bearbeiten und speichern. Kehre danach hierher zurueck und klicke auf **JSON-Datei importieren**. Datei-Aenderungen werden auch beim Neuladen der Integration oder beim Neustart von Home Assistant eingelesen.",
-        "submit": "JSON-Datei importieren"
       }
     },
     "error": {
       "cannot_remove_last": "Mindestens ein Investment ist erforderlich.",
-      "holdings_file_missing": "Die Investments-JSON-Datei existiert noch nicht.",
       "invalid_coin": "Die Coin-Werte sind ungueltig. Pruefe Coin-ID, Symbol, Menge und Investiert.",
       "invalid_currency": "Die Waehrung ist erforderlich.",
       "invalid_holdings": "Das Investments-JSON ist ungueltig. Es muss eine nicht leere Liste mit coin_id, symbol, amount und invested sein.",

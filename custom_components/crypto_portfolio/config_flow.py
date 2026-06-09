@@ -47,7 +47,8 @@ from .options import (
 from .storage import (
     holdings_file_display_path,
     holdings_file_path,
-    read_holdings_file,
+    load_or_create_holdings_file,
+    read_holdings_text,
     write_holdings_file,
 )
 
@@ -308,7 +309,6 @@ class CryptoPortfolioOptionsFlow(config_entries.OptionsFlowWithReload):
                 "select_coin",
                 "remove_coin",
                 "advanced_json",
-                "file_editor",
             ],
             description_placeholders=self._file_description_placeholders(),
         )
@@ -434,49 +434,34 @@ class CryptoPortfolioOptionsFlow(config_entries.OptionsFlowWithReload):
         """Edit all holdings as raw JSON."""
         errors: dict[str, str] = {}
         options = self._current_options()
+        holdings_json = holdings_to_json(options[CONF_HOLDINGS])
 
         if user_input is not None:
+            holdings_json = user_input[CONF_HOLDINGS_JSON]
             try:
-                holdings = holdings_from_json(user_input[CONF_HOLDINGS_JSON])
+                holdings = holdings_from_json(holdings_json)
             except HoldingsValidationError:
                 errors[CONF_HOLDINGS_JSON] = "invalid_holdings"
             else:
                 options[CONF_HOLDINGS] = holdings
                 return await self._finish(options)
+        else:
+            path = self._holdings_file_path()
+            try:
+                await self.hass.async_add_executor_job(
+                    load_or_create_holdings_file, path, options[CONF_HOLDINGS]
+                )
+                holdings_json = await self.hass.async_add_executor_job(
+                    read_holdings_text, path
+                )
+            except (HoldingsValidationError, OSError):
+                errors["base"] = "invalid_holdings_file"
 
         return self.async_show_form(
             step_id="advanced_json",
             data_schema=_advanced_json_schema(
-                user_input
-                or {CONF_HOLDINGS_JSON: holdings_to_json(options[CONF_HOLDINGS])}
+                {CONF_HOLDINGS_JSON: holdings_json}
             ),
-            errors=errors,
-            description_placeholders=self._file_description_placeholders(),
-        )
-
-    async def async_step_file_editor(
-        self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
-        """Import holdings edited in the external JSON file."""
-        errors: dict[str, str] = {}
-
-        if user_input is not None:
-            try:
-                holdings = await self.hass.async_add_executor_job(
-                    read_holdings_file, self._holdings_file_path()
-                )
-            except FileNotFoundError:
-                errors["base"] = "holdings_file_missing"
-            except (HoldingsValidationError, OSError):
-                errors["base"] = "invalid_holdings_file"
-            else:
-                options = self._current_options()
-                options[CONF_HOLDINGS] = holdings
-                return await self._finish(options)
-
-        return self.async_show_form(
-            step_id="file_editor",
-            data_schema=vol.Schema({}),
             errors=errors,
             description_placeholders=self._file_description_placeholders(),
         )

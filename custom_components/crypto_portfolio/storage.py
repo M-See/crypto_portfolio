@@ -11,21 +11,31 @@ from .options import HoldingsValidationError, holdings_from_json, holdings_to_js
 
 def holdings_file_path(config_dir: str, entry_id: str) -> Path:
     """Return the JSON file path for one config entry."""
-    return Path(config_dir) / DOMAIN / f"{entry_id}.json"
+    return (
+        Path(config_dir)
+        / "custom_components"
+        / DOMAIN
+        / "data"
+        / f"{entry_id}.json"
+    )
 
 
 def holdings_file_display_path(entry_id: str) -> str:
     """Return the config-relative path shown in the File editor."""
-    return f"{DOMAIN}/{entry_id}.json"
+    return f"custom_components/{DOMAIN}/data/{entry_id}.json"
+
+
+def read_holdings_text(path: Path) -> str:
+    """Read holdings JSON text from a file."""
+    try:
+        return path.read_text(encoding="utf-8")
+    except UnicodeError as err:
+        raise HoldingsValidationError("Holdings file must be UTF-8") from err
 
 
 def read_holdings_file(path: Path) -> list[dict[str, Any]]:
     """Read and validate holdings from a JSON file."""
-    try:
-        value = path.read_text(encoding="utf-8")
-    except UnicodeError as err:
-        raise HoldingsValidationError("Holdings file must be UTF-8") from err
-    return holdings_from_json(value)
+    return holdings_from_json(read_holdings_text(path))
 
 
 def write_holdings_file(path: Path, holdings: list[dict[str, Any]]) -> None:
