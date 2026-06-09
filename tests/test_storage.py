@@ -126,7 +126,33 @@ class HoldingsStorageTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             write_holdings_file(holdings_file_path(temp_dir), self.holdings)
 
-            filename = resolve_holdings_filename(temp_dir, None, "entry-id")
+            filename = resolve_holdings_filename(
+                temp_dir, None, "entry-id", {DEFAULT_HOLDINGS_FILENAME}
+            )
+
+            self.assertEqual(filename, "holdings-2.json")
+
+    def test_reuses_unclaimed_file_after_reinstall(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            write_holdings_file(holdings_file_path(temp_dir), self.holdings)
+
+            filename = resolve_holdings_filename(temp_dir, None, "new-entry-id")
+
+            self.assertEqual(filename, DEFAULT_HOLDINGS_FILENAME)
+            self.assertEqual(
+                read_holdings_file(holdings_file_path(temp_dir, filename)),
+                self.holdings,
+            )
+
+    def test_reuses_unclaimed_numbered_file(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            write_holdings_file(holdings_file_path(temp_dir), self.holdings)
+            numbered_path = holdings_file_path(temp_dir, "holdings-2.json")
+            write_holdings_file(numbered_path, self.holdings)
+
+            filename = resolve_holdings_filename(
+                temp_dir, None, "new-entry-id", {DEFAULT_HOLDINGS_FILENAME}
+            )
 
             self.assertEqual(filename, "holdings-2.json")
 

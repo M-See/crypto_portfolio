@@ -110,7 +110,8 @@ Weitere Portfolios erhalten einfache nummerierte Dateinamen wie
 
 Das Verzeichnis liegt ausserhalb von `custom_components`. HACS-Updates und eine
 Neuinstallation der Integration ueberschreiben die Portfolio-Dateien daher
-nicht.
+nicht. Wird ein Config Entry geloescht und neu angelegt, verwendet er die erste
+vorhandene Datei wieder, die keinem anderen aktiven Portfolio zugeordnet ist.
 
 Einen universellen Direktlink zum Home-Assistant-File-Editor gibt es nicht. Er
 ist ein Supervisor-Add-on und nicht bei jedem Installationstyp verfuegbar. Wenn

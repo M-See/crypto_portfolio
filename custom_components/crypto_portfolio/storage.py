@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Collection
 from pathlib import Path
 import shutil
 from typing import Any
@@ -44,8 +45,9 @@ def resolve_holdings_filename(
     config_dir: str,
     configured_filename: str | None,
     legacy_entry_id: str,
+    reserved_filenames: Collection[str] = (),
 ) -> str:
-    """Return a simple unique filename and migrate legacy ID-based files."""
+    """Return an unclaimed filename and migrate legacy ID-based files."""
     data_dir = holdings_data_dir(config_dir)
     data_dir.mkdir(parents=True, exist_ok=True)
     component_data_dir = (
@@ -81,10 +83,18 @@ def resolve_holdings_filename(
             if index == 1
             else f"holdings-{index}.json"
         )
+        if filename in reserved_filenames:
+            index += 1
+            continue
+
         path = data_dir / filename
+        if legacy_path is None:
+            # Reuse an orphaned file after a config entry was removed and
+            # recreated. load_or_create_holdings_file creates it when absent.
+            return filename
+
         if not path.exists():
-            if legacy_path is not None:
-                shutil.move(legacy_path, path)
+            shutil.move(legacy_path, path)
             return filename
         index += 1
 

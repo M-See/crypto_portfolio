@@ -127,7 +127,9 @@ integration or restarting Home Assistant also imports valid file changes.
 
 Additional portfolios use simple numbered filenames such as `holdings-2.json`.
 The directory is outside `custom_components`, so HACS updates and integration
-reinstalls do not overwrite the portfolio files.
+reinstalls do not overwrite the portfolio files. Removing and recreating a
+config entry also reuses the first existing file that is not assigned to
+another active portfolio.
 
 There is no universal direct link to the Home Assistant File editor. It is a
 Supervisor add-on and is not available on every installation type. When it is

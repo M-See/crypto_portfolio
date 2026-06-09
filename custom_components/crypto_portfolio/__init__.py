@@ -46,11 +46,20 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Crypto Portfolio from a config entry."""
     options = dict(entry.options)
     current_holdings = options.get(CONF_HOLDINGS, DEFAULT_HOLDINGS)
+    reserved_filenames = {
+        filename
+        for other_entry in hass.config_entries.async_entries(DOMAIN)
+        if other_entry.entry_id != entry.entry_id
+        and isinstance(
+            filename := other_entry.data.get(CONF_HOLDINGS_FILE), str
+        )
+    }
     filename = await hass.async_add_executor_job(
         resolve_holdings_filename,
         hass.config.config_dir,
         entry.data.get(CONF_HOLDINGS_FILE),
         entry.entry_id,
+        reserved_filenames,
     )
     path = holdings_file_path(hass.config.config_dir, filename)
 
