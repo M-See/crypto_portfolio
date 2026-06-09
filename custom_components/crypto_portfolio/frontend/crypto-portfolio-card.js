@@ -27,14 +27,15 @@ function patchAdvancedJsonEditor() {
       if (
         parent.localName === "ha-dialog" ||
         parent.localName === "ha-md-dialog" ||
+        parent.localName === "ha-adaptive-dialog" ||
         parent.localName === "dialog-data-entry-flow"
       ) {
         parent.style.setProperty(
-          "--mdc-dialog-min-width",
-          "min(920px, calc(100vw - 32px))"
+          "--ha-dialog-width-md",
+          "min(1024px, calc(100vw - 32px))"
         );
         parent.style.setProperty(
-          "--mdc-dialog-max-width",
+          "--ha-dialog-max-width",
           "min(1100px, calc(100vw - 32px))"
         );
       }
@@ -43,13 +44,16 @@ function patchAdvancedJsonEditor() {
 
     visitShadowDom(element.shadowRoot || element, (editorElement) => {
       if (
+        editorElement.localName === "ha-textarea" ||
         editorElement.localName === "ha-textfield" ||
         editorElement.localName === "textarea"
       ) {
         editorElement.rows = ADVANCED_JSON_EDITOR_ROWS;
+        editorElement.resize = "vertical";
         editorElement.setAttribute("rows", String(ADVANCED_JSON_EDITOR_ROWS));
+        editorElement.setAttribute("resize", "vertical");
         editorElement.style.width = "100%";
-        editorElement.style.minHeight = "min(58vh, 640px)";
+        editorElement.style.setProperty("--ha-textarea-max-height", "640px");
       }
     });
   });

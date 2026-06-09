@@ -21,13 +21,14 @@
     "step": {
       "init": {
         "title": "Crypto Portfolio options",
-        "description": "Choose what you want to edit.",
+        "description": "Choose what you want to edit. Holdings file: `{holdings_file}`. [Open File editor]({file_editor_url})",
         "menu_options": {
           "settings": "General settings",
           "add_coin": "Add coin",
           "select_coin": "Edit coin",
           "remove_coin": "Remove coin",
-          "advanced_json": "Advanced JSON editor"
+          "advanced_json": "Advanced JSON editor",
+          "file_editor": "Edit/import JSON file"
         }
       },
       "settings": {
@@ -75,17 +76,24 @@
       },
       "advanced_json": {
         "title": "Advanced JSON editor",
-        "description": "Edit all holdings as JSON. Holdings are stored in the Home Assistant config entry, not in a standalone JSON file.",
+        "description": "Edit all holdings as JSON. Saving also updates `{holdings_file}`.",
         "data": {
           "holdings_json": "Holdings JSON"
         }
+      },
+      "file_editor": {
+        "title": "Edit/import JSON file",
+        "description": "[Open File editor]({file_editor_url}), edit `{holdings_file}`, save it, then return here and click **Import JSON file**. File changes are also loaded when the integration or Home Assistant is restarted.",
+        "submit": "Import JSON file"
       }
     },
     "error": {
       "cannot_remove_last": "At least one holding is required.",
+      "holdings_file_missing": "The holdings JSON file does not exist yet.",
       "invalid_coin": "Coin values are invalid. Check coin ID, symbol, amount and invested.",
       "invalid_currency": "Currency is required.",
-      "invalid_holdings": "Holdings JSON is invalid. It must be a non-empty list with coin_id, symbol, amount and invested."
+      "invalid_holdings": "Holdings JSON is invalid. It must be a non-empty list with coin_id, symbol, amount and invested.",
+      "invalid_holdings_file": "The holdings JSON file could not be read or contains invalid holdings."
     }
   }
 }
