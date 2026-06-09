@@ -75,7 +75,7 @@
       },
       "advanced_json": {
         "title": "Advanced JSON editor",
-        "description": "Edit all holdings as JSON.",
+        "description": "Edit all holdings as JSON. Holdings are stored in the Home Assistant config entry, not in a standalone JSON file.",
         "data": {
           "holdings_json": "Holdings JSON"
         }

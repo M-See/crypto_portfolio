@@ -1,4 +1,80 @@
 (() => {
+const ADVANCED_JSON_EDITOR_ROWS = 24;
+const ADVANCED_JSON_PATCH_DURATION_MS = 30000;
+let advancedJsonPatchInterval;
+
+function visitShadowDom(root, visitor) {
+  for (const element of root.querySelectorAll("*")) {
+    visitor(element);
+    if (element.shadowRoot) {
+      visitShadowDom(element.shadowRoot, visitor);
+    }
+  }
+}
+
+function patchAdvancedJsonEditor() {
+  visitShadowDom(document, (element) => {
+    if (
+      element.localName !== "step-flow-form" ||
+      element.step?.handler !== "crypto_portfolio" ||
+      element.step?.step_id !== "advanced_json"
+    ) {
+      return;
+    }
+
+    let parent = element;
+    while (parent) {
+      if (
+        parent.localName === "ha-dialog" ||
+        parent.localName === "ha-md-dialog" ||
+        parent.localName === "dialog-data-entry-flow"
+      ) {
+        parent.style.setProperty(
+          "--mdc-dialog-min-width",
+          "min(920px, calc(100vw - 32px))"
+        );
+        parent.style.setProperty(
+          "--mdc-dialog-max-width",
+          "min(1100px, calc(100vw - 32px))"
+        );
+      }
+      parent = parent.parentElement || parent.getRootNode()?.host;
+    }
+
+    visitShadowDom(element.shadowRoot || element, (editorElement) => {
+      if (
+        editorElement.localName === "ha-textfield" ||
+        editorElement.localName === "textarea"
+      ) {
+        editorElement.rows = ADVANCED_JSON_EDITOR_ROWS;
+        editorElement.setAttribute("rows", String(ADVANCED_JSON_EDITOR_ROWS));
+        editorElement.style.width = "100%";
+        editorElement.style.minHeight = "min(58vh, 640px)";
+      }
+    });
+  });
+}
+
+function scheduleAdvancedJsonEditorPatch() {
+  if (advancedJsonPatchInterval) {
+    window.clearInterval(advancedJsonPatchInterval);
+  }
+
+  const startedAt = Date.now();
+  patchAdvancedJsonEditor();
+  advancedJsonPatchInterval = window.setInterval(() => {
+    patchAdvancedJsonEditor();
+    if (Date.now() - startedAt >= ADVANCED_JSON_PATCH_DURATION_MS) {
+      window.clearInterval(advancedJsonPatchInterval);
+      advancedJsonPatchInterval = undefined;
+    }
+  }, 250);
+}
+
+document.addEventListener("show-dialog", scheduleAdvancedJsonEditorPatch);
+document.addEventListener("flow-update", scheduleAdvancedJsonEditorPatch);
+scheduleAdvancedJsonEditorPatch();
+
 class CryptoPortfolioCard extends HTMLElement {
   static getStubConfig(hass) {
     return {

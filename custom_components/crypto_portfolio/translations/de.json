@@ -75,7 +75,7 @@
       },
       "advanced_json": {
         "title": "Erweiterter JSON-Editor",
-        "description": "Bearbeite alle Investments als JSON.",
+        "description": "Bearbeite alle Investments als JSON. Die Investments werden im Home-Assistant-Konfigurationseintrag gespeichert, nicht in einer eigenstaendigen JSON-Datei.",
         "data": {
           "holdings_json": "Investments als JSON"
         }
