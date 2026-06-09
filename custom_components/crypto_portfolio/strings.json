@@ -21,7 +21,7 @@
     "step": {
       "init": {
         "title": "Crypto Portfolio options",
-        "description": "Choose what you want to edit. Holdings file: `{holdings_file}`. [Open File editor]({file_editor_url})",
+        "description": "Choose what you want to edit. Holdings file: `{holdings_file}`.",
         "menu_options": {
           "settings": "General settings",
           "add_coin": "Add coin",
@@ -75,7 +75,7 @@
       },
       "advanced_json": {
         "title": "Advanced JSON editor",
-        "description": "[Open File editor]({file_editor_url}) and edit `{holdings_file}`. Reopen this editor to load external changes. Saving here updates the file and the integration.",
+        "description": "Edit all holdings here or in `{holdings_file}`. Reopen this editor to load external file changes. Saving updates the file and the integration.",
         "data": {
           "holdings_json": "Holdings JSON"
         }

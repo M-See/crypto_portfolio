@@ -8,21 +8,67 @@ from typing import Any
 from .const import DOMAIN
 from .options import HoldingsValidationError, holdings_from_json, holdings_to_json
 
+DEFAULT_HOLDINGS_FILENAME = "holdings.json"
 
-def holdings_file_path(config_dir: str, entry_id: str) -> Path:
+
+def holdings_data_dir(config_dir: str) -> Path:
+    """Return the directory containing portfolio JSON files."""
+    return Path(config_dir) / "custom_components" / DOMAIN / "data"
+
+
+def holdings_file_path(
+    config_dir: str, filename: str = DEFAULT_HOLDINGS_FILENAME
+) -> Path:
     """Return the JSON file path for one config entry."""
-    return (
-        Path(config_dir)
-        / "custom_components"
-        / DOMAIN
-        / "data"
-        / f"{entry_id}.json"
+    return holdings_data_dir(config_dir) / filename
+
+
+def holdings_file_display_path(
+    filename: str = DEFAULT_HOLDINGS_FILENAME,
+) -> str:
+    """Return the config-relative path shown in the File editor."""
+    return f"custom_components/{DOMAIN}/data/{filename}"
+
+
+def _is_valid_filename(filename: str | None) -> bool:
+    """Return whether a stored holdings filename is safe to use."""
+    return bool(
+        filename
+        and Path(filename).name == filename
+        and filename.endswith(".json")
     )
 
 
-def holdings_file_display_path(entry_id: str) -> str:
-    """Return the config-relative path shown in the File editor."""
-    return f"custom_components/{DOMAIN}/data/{entry_id}.json"
+def resolve_holdings_filename(
+    config_dir: str,
+    configured_filename: str | None,
+    legacy_entry_id: str,
+) -> str:
+    """Return a simple unique filename and migrate legacy ID-based files."""
+    if _is_valid_filename(configured_filename):
+        return configured_filename
+
+    data_dir = holdings_data_dir(config_dir)
+    data_dir.mkdir(parents=True, exist_ok=True)
+    legacy_paths = [
+        data_dir / f"{legacy_entry_id}.json",
+        Path(config_dir) / DOMAIN / f"{legacy_entry_id}.json",
+    ]
+    legacy_path = next((path for path in legacy_paths if path.exists()), None)
+
+    index = 1
+    while True:
+        filename = (
+            DEFAULT_HOLDINGS_FILENAME
+            if index == 1
+            else f"holdings-{index}.json"
+        )
+        path = data_dir / filename
+        if not path.exists():
+            if legacy_path is not None:
+                legacy_path.replace(path)
+            return filename
+        index += 1
 
 
 def read_holdings_text(path: Path) -> str:

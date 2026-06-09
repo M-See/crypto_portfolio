@@ -95,15 +95,18 @@ Speichern laedt Home Assistant die Integration neu.
 Fuer jedes Portfolio legt die Integration zusaetzlich eine JSON-Datei an:
 
 ```text
-/config/custom_components/crypto_portfolio/data/<config-entry-id>.json
+/config/custom_components/crypto_portfolio/data/holdings.json
 ```
 
-Der genaue relative Pfad und ein Link zum Home-Assistant-File-Editor werden im
-Optionsmenue und im erweiterten JSON-Editor angezeigt. Aenderungen ueber die UI
-aktualisieren die Datei automatisch. Nach einer Bearbeitung im File Editor
-oeffnest du den erweiterten JSON-Editor erneut und speicherst ihn, um die
-Aenderungen zu uebernehmen. Alternativ werden gueltige Datei-Aenderungen beim
-Neuladen der Integration oder beim Neustart von Home Assistant eingelesen.
+Der genaue relative Pfad wird im Optionsmenue und im erweiterten JSON-Editor
+angezeigt. Aenderungen ueber die UI aktualisieren die Datei automatisch. Nach
+einer externen Bearbeitung oeffnest du den erweiterten JSON-Editor erneut und
+speicherst ihn, um die Aenderungen zu uebernehmen. Alternativ werden gueltige
+Datei-Aenderungen beim Neuladen der Integration oder beim Neustart von Home
+Assistant eingelesen.
+
+Weitere Portfolios erhalten einfache nummerierte Dateinamen wie
+`holdings-2.json`.
 
 Da die Datei innerhalb von `custom_components` liegt, solltest du sie vor einem
 HACS-Update oder einer Neuinstallation sichern.

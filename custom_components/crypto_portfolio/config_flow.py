@@ -29,6 +29,7 @@ from .const import (
     CONF_COIN_ID,
     CONF_CURRENCY,
     CONF_HOLDINGS,
+    CONF_HOLDINGS_FILE,
     CONF_HOLDINGS_JSON,
     CONF_INVESTED,
     CONF_SYMBOL,
@@ -45,6 +46,7 @@ from .options import (
     normalize_holding,
 )
 from .storage import (
+    DEFAULT_HOLDINGS_FILENAME,
     holdings_file_display_path,
     holdings_file_path,
     load_or_create_holdings_file,
@@ -257,16 +259,19 @@ class CryptoPortfolioOptionsFlow(config_entries.OptionsFlowWithReload):
     def _holdings_file_path(self) -> Path:
         """Return the holdings JSON path for this config entry."""
         return holdings_file_path(
-            self.hass.config.config_dir, self.config_entry.entry_id
+            self.hass.config.config_dir,
+            self.config_entry.data.get(
+                CONF_HOLDINGS_FILE, DEFAULT_HOLDINGS_FILENAME
+            ),
         )
 
     def _file_description_placeholders(self) -> dict[str, str]:
         """Return placeholders used by JSON file descriptions."""
         return {
-            "holdings_file": holdings_file_display_path(self.config_entry.entry_id),
-            "file_editor_url": (
-                "https://my.home-assistant.io/redirect/supervisor_ingress/"
-                "?addon=core_configurator"
+            "holdings_file": holdings_file_display_path(
+                self.config_entry.data.get(
+                    CONF_HOLDINGS_FILE, DEFAULT_HOLDINGS_FILENAME
+                )
             ),
         }
 
