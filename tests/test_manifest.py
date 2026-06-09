@@ -16,6 +16,7 @@ class ManifestTest(unittest.TestCase):
         manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
 
         self.assertIn("frontend", manifest["dependencies"])
+        self.assertIn("lovelace", manifest["dependencies"])
 
 
 if __name__ == "__main__":

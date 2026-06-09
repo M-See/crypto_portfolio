@@ -210,11 +210,11 @@ The per-coin sensors also expose `coin_id`, `symbol`, `amount`, `invested`,
 The integration bundles a Lovelace card:
 
 ```text
-/crypto_portfolio/crypto-portfolio-card.js?v=14
+/crypto_portfolio/crypto-portfolio-card.js?v=15
 ```
 
-The integration tries to load the card automatically after it is set up. If the
-card does not appear in the card picker, add the dashboard resource manually.
+The integration persists the card as a Lovelace module resource after it is set
+up. Existing resources using an older version URL are updated automatically.
 
 ### Manual resource setup
 
@@ -224,7 +224,7 @@ card does not appear in the card picker, add the dashboard resource manually.
 4. Add a resource:
 
    ```text
-   URL:  /crypto_portfolio/crypto-portfolio-card.js?v=14
+   URL:  /crypto_portfolio/crypto-portfolio-card.js?v=15
    Type: JavaScript module
    ```
 
@@ -234,7 +234,7 @@ card does not appear in the card picker, add the dashboard resource manually.
 You can also test the file directly in your browser:
 
 ```text
-https://your-home-assistant-url/crypto_portfolio/crypto-portfolio-card.js?v=14
+https://your-home-assistant-url/crypto_portfolio/crypto-portfolio-card.js?v=15
 ```
 
 If this URL returns `404`, the integration is not loaded yet. Restart Home

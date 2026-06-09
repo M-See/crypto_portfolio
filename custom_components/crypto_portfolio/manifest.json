@@ -3,11 +3,11 @@
   "name": "Crypto Portfolio",
   "codeowners": ["@M-See"],
   "config_flow": true,
-  "dependencies": ["frontend", "http"],
+  "dependencies": ["frontend", "http", "lovelace"],
   "documentation": "https://github.com/M-See/crypto_portfolio",
   "integration_type": "service",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/M-See/crypto_portfolio/issues",
   "requirements": [],
-  "version": "0.3.12"
+  "version": "0.3.13"
 }

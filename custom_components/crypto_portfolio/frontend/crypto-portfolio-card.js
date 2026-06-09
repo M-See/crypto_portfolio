@@ -794,7 +794,7 @@ const cryptoPortfolioCardInfo = {
   type: "crypto-portfolio-card",
   name: "Crypto Portfolio Card",
   description: "Shows a crypto portfolio overview from one sensor entity.",
-  preview: true,
+  preview: false,
   documentationURL:
     "https://github.com/M-See/crypto_portfolio#dashboard-card",
   getEntitySuggestion: (hass, entityId) => {

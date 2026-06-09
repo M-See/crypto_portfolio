@@ -139,12 +139,12 @@ Gewinn, Gewinn-Prozent und 24h-Aenderung.
 Die Integration liefert eine einfache Portfolio-Karte mit aus:
 
 ```text
-/crypto_portfolio/crypto-portfolio-card.js?v=14
+/crypto_portfolio/crypto-portfolio-card.js?v=15
 ```
 
-Wenn die Integration geladen ist, registriert sie diese Datei automatisch als
-Frontend-Modul. Danach sollte die Karte im Karten-Picker als **Crypto Portfolio
-Card** erscheinen. Falls dein Browser noch den alten Frontend-Cache nutzt:
+Wenn die Integration geladen ist, speichert sie diese Datei automatisch als
+Lovelace-Modul-Resource und aktualisiert dabei alte Versions-URLs. Danach
+erscheint die Karte im Karten-Picker als **Crypto Portfolio Card**.
 
 ```text
 Strg + F5
@@ -155,7 +155,7 @@ Manuell kannst du die Resource weiterhin hinzufuegen:
 1. Profil > **Erweiterter Modus** aktivieren.
 2. **Einstellungen > Dashboards > Drei-Punkte-Menue > Ressourcen**.
 3. Resource hinzufuegen:
-   - URL: `/crypto_portfolio/crypto-portfolio-card.js?v=14`
+   - URL: `/crypto_portfolio/crypto-portfolio-card.js?v=15`
    - Typ: `JavaScript module`
 
 Danach eine manuelle Karte im Dashboard:

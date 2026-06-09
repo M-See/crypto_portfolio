@@ -32,6 +32,52 @@ def _announce_frontend_card(hass: HomeAssistant) -> None:
     frontend.add_extra_js_url(hass, FRONTEND_CARD_URL)
 
 
+async def _ensure_lovelace_resource(hass: HomeAssistant) -> None:
+    """Persist the bundled card as a Lovelace module resource."""
+    from homeassistant.components.lovelace.const import (
+        CONF_RESOURCE_TYPE_WS,
+        LOVELACE_DATA,
+    )
+
+    resources = hass.data[LOVELACE_DATA].resources
+    if not hasattr(resources, "async_create_item"):
+        _LOGGER.debug(
+            "Lovelace uses YAML resources; automatic resource persistence skipped"
+        )
+        return
+
+    await resources.async_get_info()
+    card_path = f"/{DOMAIN}/crypto-portfolio-card.js"
+    matching_resources = [
+        resource
+        for resource in resources.async_items()
+        if resource.get("url", "").split("?", 1)[0] == card_path
+    ]
+    if matching_resources:
+        current_resource = matching_resources[0]
+        if (
+            current_resource.get("url") != FRONTEND_CARD_URL
+            or current_resource.get("type") != "module"
+        ):
+            await resources.async_update_item(
+                current_resource["id"],
+                {
+                    "url": FRONTEND_CARD_URL,
+                    CONF_RESOURCE_TYPE_WS: "module",
+                },
+            )
+        for duplicate in matching_resources[1:]:
+            await resources.async_delete_item(duplicate["id"])
+        return
+
+    await resources.async_create_item(
+        {
+            "url": FRONTEND_CARD_URL,
+            CONF_RESOURCE_TYPE_WS: "module",
+        }
+    )
+
+
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     """Set up the integration and expose the bundled frontend card."""
     from homeassistant.components.http import StaticPathConfig
@@ -65,6 +111,7 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Crypto Portfolio from a config entry."""
     _announce_frontend_card(hass)
+    await _ensure_lovelace_resource(hass)
     options = dict(entry.options)
     current_holdings = options.get(CONF_HOLDINGS, DEFAULT_HOLDINGS)
     reserved_filenames = {
