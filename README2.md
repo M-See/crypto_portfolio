@@ -98,6 +98,9 @@ Fuer jedes Portfolio legt die Integration zusaetzlich eine JSON-Datei an:
 /config/crypto_portfolio/holdings.json
 ```
 
+Im Home-Assistant-File-Editor wird derselbe Pfad als
+`/homeassistant/crypto_portfolio/holdings.json` angezeigt.
+
 Der genaue relative Pfad wird im Optionsmenue und im erweiterten JSON-Editor
 angezeigt. Aenderungen ueber die UI aktualisieren die Datei automatisch. Nach
 einer externen Bearbeitung oeffnest du den erweiterten JSON-Editor erneut und

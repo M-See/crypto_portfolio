@@ -120,6 +120,9 @@ The integration also keeps a JSON file for each portfolio:
 /config/crypto_portfolio/holdings.json
 ```
 
+The Home Assistant File editor displays the same path as
+`/homeassistant/crypto_portfolio/holdings.json`.
+
 The exact relative path is shown in the options menu and advanced JSON editor.
 UI changes update this file automatically. After editing the file externally,
 reopen the advanced JSON editor and save it to apply the changes. Reloading the

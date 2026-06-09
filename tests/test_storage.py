@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 import sys
 import tempfile
@@ -121,6 +122,78 @@ class HoldingsStorageTest(unittest.TestCase):
             )
 
             self.assertFalse(legacy_id_path.exists())
+
+    def test_removes_matching_component_file_when_target_exists(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            component_path = (
+                Path(temp_dir)
+                / "custom_components"
+                / "crypto_portfolio"
+                / "data"
+                / DEFAULT_HOLDINGS_FILENAME
+            )
+            target_path = holdings_file_path(temp_dir)
+            write_holdings_file(component_path, self.holdings)
+            write_holdings_file(target_path, self.holdings)
+
+            resolve_holdings_filename(
+                temp_dir, DEFAULT_HOLDINGS_FILENAME, "entry-id"
+            )
+
+            self.assertFalse(component_path.exists())
+            self.assertEqual(read_holdings_file(target_path), self.holdings)
+
+    def test_preserves_different_legacy_file_as_migration_backup(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            component_path = (
+                Path(temp_dir)
+                / "custom_components"
+                / "crypto_portfolio"
+                / "data"
+                / DEFAULT_HOLDINGS_FILENAME
+            )
+            target_path = holdings_file_path(temp_dir)
+            legacy_holdings = [{**self.holdings[0], "amount": 2}]
+            write_holdings_file(component_path, legacy_holdings)
+            write_holdings_file(target_path, self.holdings)
+            os.utime(component_path, (1, 1))
+
+            resolve_holdings_filename(
+                temp_dir, DEFAULT_HOLDINGS_FILENAME, "entry-id"
+            )
+
+            backup_path = holdings_file_path(
+                temp_dir, "holdings-migration-backup.json"
+            )
+            self.assertFalse(component_path.exists())
+            self.assertEqual(read_holdings_file(target_path), self.holdings)
+            self.assertEqual(read_holdings_file(backup_path), legacy_holdings)
+
+    def test_newer_legacy_file_becomes_active_and_preserves_target(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            component_path = (
+                Path(temp_dir)
+                / "custom_components"
+                / "crypto_portfolio"
+                / "data"
+                / DEFAULT_HOLDINGS_FILENAME
+            )
+            target_path = holdings_file_path(temp_dir)
+            legacy_holdings = [{**self.holdings[0], "amount": 2}]
+            write_holdings_file(component_path, legacy_holdings)
+            write_holdings_file(target_path, self.holdings)
+            os.utime(target_path, (1, 1))
+
+            resolve_holdings_filename(
+                temp_dir, DEFAULT_HOLDINGS_FILENAME, "entry-id"
+            )
+
+            backup_path = holdings_file_path(
+                temp_dir, "holdings-migration-backup.json"
+            )
+            self.assertFalse(component_path.exists())
+            self.assertEqual(read_holdings_file(target_path), legacy_holdings)
+            self.assertEqual(read_holdings_file(backup_path), self.holdings)
 
     def test_uses_numbered_filename_for_another_portfolio(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:

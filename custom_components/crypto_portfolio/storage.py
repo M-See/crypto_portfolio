@@ -41,6 +41,38 @@ def _is_valid_filename(filename: str | None) -> bool:
     )
 
 
+def _migration_backup_path(target_path: Path) -> Path:
+    """Return an unused persistent path for a migration conflict."""
+    index = 1
+    while True:
+        suffix = "" if index == 1 else f"-{index}"
+        path = target_path.with_name(
+            f"{target_path.stem}-migration-backup{suffix}{target_path.suffix}"
+        )
+        if not path.exists():
+            return path
+        index += 1
+
+
+def _migrate_legacy_file(legacy_path: Path, target_path: Path) -> None:
+    """Move a legacy file out of custom_components without losing data."""
+    if not target_path.exists():
+        shutil.move(legacy_path, target_path)
+        return
+
+    if legacy_path.read_bytes() == target_path.read_bytes():
+        legacy_path.unlink()
+        return
+
+    backup_path = _migration_backup_path(target_path)
+    if legacy_path.stat().st_mtime > target_path.stat().st_mtime:
+        shutil.move(target_path, backup_path)
+        shutil.move(legacy_path, target_path)
+        return
+
+    shutil.move(legacy_path, backup_path)
+
+
 def resolve_holdings_filename(
     config_dir: str,
     configured_filename: str | None,
@@ -56,18 +88,17 @@ def resolve_holdings_filename(
 
     if _is_valid_filename(configured_filename):
         target_path = data_dir / configured_filename
-        if target_path.exists():
-            return configured_filename
-
         configured_legacy_path = component_data_dir / configured_filename
         if configured_legacy_path.exists():
-            shutil.move(configured_legacy_path, target_path)
-            legacy_id_path = data_dir / f"{legacy_entry_id}.json"
-            if (
-                legacy_id_path.exists()
-                and legacy_id_path.read_bytes() == target_path.read_bytes()
-            ):
-                legacy_id_path.unlink()
+            _migrate_legacy_file(configured_legacy_path, target_path)
+
+        legacy_id_path = data_dir / f"{legacy_entry_id}.json"
+        if (
+            target_path.exists()
+            and legacy_id_path.exists()
+            and legacy_id_path.read_bytes() == target_path.read_bytes()
+        ):
+            legacy_id_path.unlink()
         return configured_filename
 
     legacy_paths = [
