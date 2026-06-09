@@ -103,10 +103,9 @@ Im Home-Assistant-File-Editor wird derselbe Pfad als
 
 Der genaue relative Pfad wird im Optionsmenue und im erweiterten JSON-Editor
 angezeigt. Aenderungen ueber die UI aktualisieren die Datei automatisch. Nach
-einer externen Bearbeitung oeffnest du den erweiterten JSON-Editor erneut und
-speicherst ihn, um die Aenderungen zu uebernehmen. Alternativ werden gueltige
-Datei-Aenderungen beim Neuladen der Integration oder beim Neustart von Home
-Assistant eingelesen.
+einer externen Bearbeitung nutzt du Home Assistants schnelles Neuladen, laedst
+die Integration neu oder startest Home Assistant neu. Alternativ kannst du den
+erweiterten JSON-Editor erneut oeffnen und speichern.
 
 Weitere Portfolios erhalten einfache nummerierte Dateinamen wie
 `holdings-2.json`.
@@ -140,7 +139,7 @@ Gewinn, Gewinn-Prozent und 24h-Aenderung.
 Die Integration liefert eine einfache Portfolio-Karte mit aus:
 
 ```text
-/crypto_portfolio/crypto-portfolio-card.js?v=4
+/crypto_portfolio/crypto-portfolio-card.js?v=14
 ```
 
 Wenn die Integration geladen ist, registriert sie diese Datei automatisch als
@@ -156,7 +155,7 @@ Manuell kannst du die Resource weiterhin hinzufuegen:
 1. Profil > **Erweiterter Modus** aktivieren.
 2. **Einstellungen > Dashboards > Drei-Punkte-Menue > Ressourcen**.
 3. Resource hinzufuegen:
-   - URL: `/crypto_portfolio/crypto-portfolio-card.js?v=4`
+   - URL: `/crypto_portfolio/crypto-portfolio-card.js?v=14`
    - Typ: `JavaScript module`
 
 Danach eine manuelle Karte im Dashboard:

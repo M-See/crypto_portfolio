@@ -25,7 +25,6 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
     DataUpdateCoordinator,
-    UpdateFailed,
 )
 
 from .api import async_fetch_prices
@@ -132,9 +131,11 @@ async def async_setup_entry(
         CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL_MINUTES
     )
     session = async_get_clientsession(hass)
+    latest_summary = calculate_portfolio(holdings, {}, currency)
 
     async def async_update_data() -> PortfolioSummary:
         """Fetch latest data from CoinGecko and calculate the portfolio."""
+        nonlocal latest_summary
         try:
             prices = await async_fetch_prices(
                 session,
@@ -142,11 +143,15 @@ async def async_setup_entry(
                 currency,
             )
         except (ClientError, TimeoutError, ValueError) as err:
-            raise UpdateFailed(f"Could not update CoinGecko prices: {err}") from err
+            _LOGGER.warning(
+                "Could not update CoinGecko prices; keeping existing data: %s",
+                err,
+            )
+            return latest_summary
 
-        return calculate_portfolio(holdings, prices, currency)
+        latest_summary = calculate_portfolio(holdings, prices, currency)
+        return latest_summary
 
-    initial_data = calculate_portfolio(holdings, {}, currency)
     coordinator: DataUpdateCoordinator[PortfolioSummary] = DataUpdateCoordinator(
         hass,
         _LOGGER,
@@ -155,8 +160,7 @@ async def async_setup_entry(
         update_method=async_update_data,
         update_interval=timedelta(minutes=scan_interval_minutes),
     )
-    coordinator.async_set_updated_data(initial_data)
-    await coordinator.async_refresh()
+    coordinator.async_set_updated_data(latest_summary)
 
     unique_prefix = f"{DOMAIN}_{entry.entry_id}"
     entities: list[SensorEntity] = [
@@ -169,6 +173,11 @@ async def async_setup_entry(
     )
 
     async_add_entities(entities)
+    entry.async_create_background_task(
+        hass,
+        coordinator.async_request_refresh(),
+        name=f"{DOMAIN}_{entry.entry_id}_initial_refresh",
+    )
 
 
 class CryptoPortfolioSummarySensor(

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -23,10 +24,18 @@ PLATFORMS = ["sensor"]
 _LOGGER = logging.getLogger(__name__)
 
 
+def _announce_frontend_card(hass: HomeAssistant) -> None:
+    """Register the card and notify already open frontend sessions."""
+    from homeassistant.components import frontend
+
+    frontend.remove_extra_js_url(hass, FRONTEND_CARD_URL)
+    frontend.add_extra_js_url(hass, FRONTEND_CARD_URL)
+
+
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     """Set up the integration and expose the bundled frontend card."""
-    from homeassistant.components import frontend
     from homeassistant.components.http import StaticPathConfig
+    from homeassistant.const import SERVICE_RELOAD
 
     frontend_path = Path(__file__).parent / "frontend"
     await hass.http.async_register_static_paths(
@@ -34,16 +43,28 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
             StaticPathConfig(
                 f"/{DOMAIN}",
                 str(frontend_path),
-                cache_headers=True,
+                cache_headers=False,
             )
         ]
     )
-    frontend.add_extra_js_url(hass, FRONTEND_CARD_URL)
+    _announce_frontend_card(hass)
+
+    async def async_reload_portfolios(call) -> None:
+        """Reload all Crypto Portfolio config entries."""
+        await asyncio.gather(
+            *(
+                hass.config_entries.async_reload(entry.entry_id)
+                for entry in hass.config_entries.async_entries(DOMAIN)
+            )
+        )
+
+    hass.services.async_register(DOMAIN, SERVICE_RELOAD, async_reload_portfolios)
     return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Crypto Portfolio from a config entry."""
+    _announce_frontend_card(hass)
     options = dict(entry.options)
     current_holdings = options.get(CONF_HOLDINGS, DEFAULT_HOLDINGS)
     reserved_filenames = {

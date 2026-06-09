@@ -156,7 +156,17 @@ class CryptoPortfolioCard extends HTMLElement {
     if (!state) {
       this.shadowRoot.innerHTML = `
         <ha-card>
-          <div class="empty">Bitte einen Crypto-Portfolio-Sensor auswaehlen.</div>
+          <div class="card empty-state">
+            <div class="title">${this.escape(this.config?.title || "Crypto Portfolio")}</div>
+            <div class="empty-metrics">
+              ${this.metric("Invest", "-")}
+              ${this.metric("Wert", "-")}
+              ${this.metric("Gewinn", "-")}
+            </div>
+            <div class="status">
+              Die Karte ist bereit. Portfolio-Sensoren werden nach der Einrichtung automatisch erkannt.
+            </div>
+          </div>
         </ha-card>
         ${this.styles()}
       `;
@@ -170,6 +180,9 @@ class CryptoPortfolioCard extends HTMLElement {
     const sortedPositions = this.sortPositions(positions);
     const profit = this.toNumber(attrs.profit);
     const profitPercent = this.toNumber(attrs.profit_percent);
+    const missingPrices = Array.isArray(attrs.missing_prices)
+      ? attrs.missing_prices
+      : [];
     this.loadHistory(entityId);
 
     this.shadowRoot.innerHTML = `
@@ -194,6 +207,16 @@ class CryptoPortfolioCard extends HTMLElement {
             ${this.metric("Wert", this.formatMoney(state.state, currency, locale))}
             ${this.metric("Gewinn", this.formatMoney(profit, currency, locale), this.classForValue(profit))}
           </div>
+
+          ${
+            missingPrices.length
+              ? `<div class="status">${
+                  missingPrices.length === positions.length
+                    ? "Portfolio geladen. Live-Kurse werden abgerufen."
+                    : `Live-Kurse fehlen noch fuer ${missingPrices.length} Positionen.`
+                }</div>`
+              : ""
+          }
 
           ${this.config.show_graph === false ? "" : this.historyChart(state, currency, locale)}
 
@@ -516,6 +539,25 @@ class CryptoPortfolioCard extends HTMLElement {
           margin-bottom: 14px;
         }
 
+        .empty-metrics {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 8px;
+          margin-top: 14px;
+          margin-bottom: 14px;
+        }
+
+        .status {
+          margin-bottom: 14px;
+          border: 1px solid color-mix(in srgb, var(--primary-color) 30%, var(--divider-color));
+          border-radius: 8px;
+          padding: 10px 12px;
+          background: color-mix(in srgb, var(--primary-color) 8%, transparent);
+          color: var(--secondary-text-color);
+          font-size: 13px;
+          line-height: 1.4;
+        }
+
         .metric {
           min-width: 0;
           border: 1px solid var(--divider-color);
@@ -678,10 +720,6 @@ class CryptoPortfolioCard extends HTMLElement {
           color: var(--primary-text-color);
         }
 
-        .empty {
-          padding: 16px;
-        }
-
         @keyframes shimmer {
           from {
             transform: translateX(-100%);
@@ -705,6 +743,10 @@ class CryptoPortfolioCard extends HTMLElement {
           }
 
           .metrics {
+            grid-template-columns: 1fr;
+          }
+
+          .empty-metrics {
             grid-template-columns: 1fr;
           }
 

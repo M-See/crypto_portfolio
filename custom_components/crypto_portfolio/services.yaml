@@ -1,0 +1,3 @@
+reload:
+  name: Reload portfolios
+  description: Reload all Crypto Portfolio entries and import external JSON changes.
